@@ -5,6 +5,7 @@ class UserRepository extends CrudRepository {
     constructor(){
         super(User);
     }
+    
 }
 
 export default UserRepository;

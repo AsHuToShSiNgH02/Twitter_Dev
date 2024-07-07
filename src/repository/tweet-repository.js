@@ -29,7 +29,7 @@ class TweetRepository extends CrudRepository {
         } catch (error) {
             console.log(error);
         }
-    }
+    } 
 
     async getAll(offset, limit) {
         try {
