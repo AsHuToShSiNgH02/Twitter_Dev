@@ -1,20 +1,21 @@
-import {LikeRepository, TweetRepository} from '../repository/index.js'
+import {LikeRepository, TweetRepository, CommentRepository} from '../repository/index.js'
 import Tweet from '../models/tweet.js';
+import Comment from '../models/comment.js';
 
 class LikeService{
     constructor(){
         this.likeRepository = new LikeRepository();
         this.tweetRepository = new TweetRepository();
+        this.commentRepository = new CommentRepository();
     }
 
     async toggleLike(modelId, modelType, userId) { //api/v1/likes/toggle?id=modelid&type=Tweet
 
-        console.log(modelId, modelType, userId);
+        let likable;
         if(modelType == 'Tweet'){
-            var likable = await this.tweetRepository.find(modelId);
-
+            likable = await this.tweetRepository.find(modelId);
         }else if(modelType == 'Comment'){
-            //TODO
+            likable = await this.commentRepository.find(modelId);
         }else{
             throw new Error('unknown model type');
         }
@@ -23,15 +24,12 @@ class LikeService{
             onModel: modelType,
             likable: modelId
         });
-        console.log("exists", exists);
         if(exists) {
-            console.log("enter exists");
             likable.likes.pull(exists.id);
             await likable.save();
             await this.likeRepository.deleteOne({ _id: exists._id });
             var isAdded = false;
         } else {
-            console.log("enter non exists");
             const newLike = await this.likeRepository.create({
                 user: userId,
                 onModel:modelType,
